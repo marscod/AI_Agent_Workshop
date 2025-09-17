@@ -57,6 +57,8 @@ with st.form(key='search_form'):
         # Select a host for the SearchAgent
         host = st.selectbox("Select a host", ["xAI", "Groq", "Grok", "HF"], index=0, label_visibility="collapsed")
         host = host.lower()
+        if host=="HF":
+            os.environ["HF_API"]=None
 
 if search_button:
     # create a SearchAgent instance with a delay of 0 seconds
@@ -72,14 +74,14 @@ if search_button:
             updated_agent = agent.call(query= st.session_state.input_query)
         except Exception as e:
             # display an error message if there is an exception
-            st.toast(f"API Provider is not available. Check API key.")
+            st.toast(f"API Provider is not available. Check API key.:{e}")
             updated_agent = None
 
     # display the search results
     for i, step in enumerate(updated_agent.memory.steps):
         try:
             # display the step number and the model output details
-            st.markdown(f"Step ({i}): (thinking for {step.duration:.2f} seconds)\n")
+            st.markdown(f"Step ({i}): (thinking for {step.timing.duration:.2f} seconds)\n")
 
             with st.expander(f"Facts for Step ({i})", expanded=False):
                 # display the facts for the step such as the query, model name, and model output
@@ -91,7 +93,8 @@ if search_button:
         except Exception as e:
             # display an error message if there is an exception
             # uncomment the following line to see the error message
-            # st.markdown(f"Error: {e}")
+            st.markdown(f"Error: {e}")
+
             pass
     
     
