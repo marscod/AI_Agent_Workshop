@@ -1,4 +1,5 @@
-# AI Agent Workshop Setup Guide  
+# AI Agent Workshop Setup Guide
+Checkout latest slides [here](https://github.com/marscod/AI_Agent_Workshop/tree/main/slides).
 
 Hands-on Session Requirements:
 
