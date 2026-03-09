@@ -14,3 +14,5 @@ RAIT ACM SIGAI, India,  Jan 10, 2026 [Slide](https://docs.google.com/presentatio
 Dnyaan Prasad Global University (DPGU), Pune, India, Feb 9, 2026 [Slide](https://docs.google.com/presentation/d/13ND-Apu8l6T-wUyB8azYykCVs6VBIP9Gr-TDFxp0IcI/edit?usp=sharing).
 
 Governors State University, Feb 23, 2026 [Slide](https://docs.google.com/presentation/d/1GBzM2MK5QV8kDQt8PiVC27wbJLGUJttQ4iTF8UkRnX8/edit?usp=sharing).
+
+University of Maryland, College Park, Mar 09, 2026 [Slide](https://docs.google.com/presentation/d/1H4G40etHd1tPrRN9ZJUe8xAC1mY1Wo4rt6c1blZuOKc/edit?usp=sharing).
