@@ -1,7 +1,5 @@
-from litellm import completion
 import os
 from smolagents import CodeAgent, DuckDuckGoSearchTool, LiteLLMModel, InferenceClientModel
-from huggingface_hub import login, InferenceClient
 from time import sleep
 import litellm
 from tqdm import tqdm
@@ -63,28 +61,38 @@ class SearchAgent:
         # You may set environment variables for API keys manually
         # os.environ["GROQ_API_KEY"] = "your-groq-api-key"
         # os.environ["XAI_API_KEY"] = "your-xai-api-key"
+        api_key = None
+        model_kwargs = {"temperature": 0.2}
+
         if host == "groq":
-            self.model_name="groq/llama3-8b-8192"
+            self.model_name = "groq/llama3-8b-8192"
             api_key = os.getenv("GROQ_API_KEY")
-        elif host =="xai":
-            self.model_name="xai/grok-4-latest"
+        elif host == "xai":
+            self.model_name = "xai/grok-4-latest"
             api_key = os.getenv("XAI_API_KEY")
-        elif host=="cerebras":
-            self.model_name="cerebras/llama-3.3-70b"
+        elif host == "cerebras":
+            self.model_name = "cerebras/llama-3.3-70b"
             api_key = os.getenv("CEREBRAS_API_KEY")
-        elif host=="hf":
+        elif host == "hf":
             self.model_name = os.getenv("HF_API")
+        elif host == "ollama":
+            ollama_model = os.getenv("OLLAMA_MODEL", "gemini-3-flash-preview:latest")
+            if "/" in ollama_model:
+                self.model_name = ollama_model
+            else:
+                self.model_name = f"ollama_chat/{ollama_model}"
+            model_kwargs["api_base"] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         else:
             raise AssertionError("Invalid host")
-        self.delay=delay
+        self.delay = delay
 
-        if host=="hf":
-           self.model= InferenceClientModel(self.model_name)
+        if host == "hf":
+           self.model = InferenceClientModel(self.model_name)
         else:
             self.model = LiteLLMModel(
                 self.model_name,
-                temperature=0.2,
-                api_key=api_key
+                api_key=api_key,
+                **model_kwargs,
             )
 
     def call(self, query, max_results=20):

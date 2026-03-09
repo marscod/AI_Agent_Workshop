@@ -21,6 +21,10 @@ Click the **Fork** button on GitHub to create your own copy of the repository.
 ```bash
 GROQ_API_KEY="YOUR GROQ KEY"
 XAI_API_KEY="YOUR XAI KEY"
+CEREBRAS_API_KEY="YOUR CEREBRAS KEY"
+HF_API="your-hf-model-id"
+OLLAMA_MODEL="llama3.2"
+OLLAMA_BASE_URL="http://localhost:11434"
 ```
 
 ## 3. Open the Forked Repository in GitHub Codespaces  
@@ -56,6 +60,15 @@ source venv/bin/activate
 
 8. (Optional) Make the Server Public  
 If needed, you can expose the port to the public, allowing others to access your AI Agent.  
+
+### Optional: Run with Ollama
+1. Install and start Ollama locally.
+2. Pull a model, for example:
+```bash
+ollama pull llama3.2
+```
+3. Add `OLLAMA_MODEL` and `OLLAMA_BASE_URL` to `Agents/.env` if you want values other than the defaults above.
+4. In the Streamlit app, choose `Ollama` from the model provider dropdown.
 
 # Contribution
 We welcome contributions! Feel free to submit a Pull Request (PR) from your forked repository.
