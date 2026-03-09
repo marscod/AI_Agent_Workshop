@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 
 # Add an icon to the app
 st.set_page_config(
@@ -55,10 +56,19 @@ with st.form(key='search_form'):
     
     with col3:
         # Select a host for the SearchAgent
-        host = st.selectbox("Select a host", ["xAI", "Groq", "Grok", "HF"], index=0, label_visibility="collapsed")
+        host = st.selectbox(
+            "Select a host",
+            ["xAI", "Groq", "Cerebras", "HF", "Ollama"],
+            index=0,
+            label_visibility="collapsed",
+        )
         host = host.lower()
-        if host=="HF":
-            os.environ["HF_API"]=None
+        if host == "hf" and not os.getenv("HF_API"):
+            st.caption("Set `HF_API` in `Agents/.env` to use Hugging Face Inference.")
+        elif host == "ollama":
+            st.caption(
+                "Run Ollama locally and optionally set `OLLAMA_MODEL` and `OLLAMA_BASE_URL` in `Agents/.env`."
+            )
 
 if search_button:
     # create a SearchAgent instance with a delay of 0 seconds
@@ -79,26 +89,33 @@ if search_button:
     
     if updated_agent is None:
         st.toast("API Provider is not available.")
+    elif getattr(updated_agent, "memory", None):
+        # display the search results
+        for i, step in enumerate(updated_agent.memory.steps):
+            try:
+                timing = getattr(step, "timing", None)
+                duration = getattr(timing, "duration", None)
+                step_label = f"Step ({i})"
+                if isinstance(duration, (int, float)):
+                    step_label = f"{step_label}: (thinking for {duration:.2f} seconds)"
 
-    # display the search results
-    for i, step in enumerate(updated_agent.memory.steps):
-        try:
-            # display the step number and the model output details
-            st.markdown(f"Step ({i}): (thinking for {step.timing.duration:.2f} seconds)\n")
+                st.markdown(f"{step_label}\n")
 
-            with st.expander(f"Facts for Step ({i})", expanded=False):
-                # display the facts for the step such as the query, model name, and model output
-                st.json(step.dict())
-            
-            # display the model output
-            st.markdown(step.model_output)
+                with st.expander(f"Facts for Step ({i})", expanded=False):
+                    # Some smolagents versions expose `model_dump`, others `dict`.
+                    if hasattr(step, "model_dump"):
+                        st.json(step.model_dump())
+                    elif hasattr(step, "dict"):
+                        st.json(step.dict())
+                    else:
+                        st.write(step)
+                
+                model_output = getattr(step, "model_output", None)
+                if model_output:
+                    st.markdown(model_output)
 
-        except Exception as e:
-            # display an error message if there is an exception
-            # uncomment the following line to see the error message
-            st.markdown(f"Error: {e}")
-
-            pass
+            except Exception as e:
+                # display an error message if there is an exception
+                st.markdown(f"Error: {e}")
     
     
-
