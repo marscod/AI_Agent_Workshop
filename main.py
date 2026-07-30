@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 
 # Add an icon to the app
@@ -79,26 +80,28 @@ if search_button:
     
     if updated_agent is None:
         st.toast("API Provider is not available.")
+    else:
+        # display the search results
+        for i, step in enumerate(updated_agent.memory.steps):
+            try:
+                step_type = type(step).__name__
+                duration_text = "N/A"
+                if hasattr(step, "timing") and step.timing is not None:
+                    duration = getattr(step.timing, "duration", None)
+                    if duration is None and getattr(step.timing, "start_time", None) is not None and getattr(step.timing, "end_time", None) is not None:
+                        duration = step.timing.end_time - step.timing.start_time
+                    duration_text = f"{duration:.2f}" if duration is not None else "unknown"
 
-    # display the search results
-    for i, step in enumerate(updated_agent.memory.steps):
-        try:
-            # display the step number and the model output details
-            st.markdown(f"Step ({i}): (thinking for {step.timing.duration:.2f} seconds)\n")
+                st.markdown(f"Step ({i}) [{step_type}]: (thinking for {duration_text} seconds)\n")
 
-            with st.expander(f"Facts for Step ({i})", expanded=False):
-                # display the facts for the step such as the query, model name, and model output
-                st.json(step.dict())
-            
-            # display the model output
-            st.markdown(step.model_output)
+                with st.expander(f"Facts for Step ({i})", expanded=False):
+                    # display the facts for the step such as the query, model name, and model output
+                    st.json(step.dict())
 
-        except Exception as e:
-            # display an error message if there is an exception
-            # uncomment the following line to see the error message
-            st.markdown(f"Error: {e}")
+                if hasattr(step, "model_output") and step.model_output is not None:
+                    st.markdown(step.model_output)
 
-            pass
-    
-    
-
+            except Exception as e:
+                # display an error message if there is an exception
+                st.markdown(f"Error: {e}")
+                pass
