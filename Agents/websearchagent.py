@@ -7,12 +7,12 @@ import litellm
 from tqdm import tqdm
 from dotenv import load_dotenv
 
-# Load environment variables
-# it can be used for API keys or other sensitive information
-# add .env in /Agents folder with the following content
+# Load environment variables from the Agents folder
+# It can be used for API keys or other sensitive information
+# Create Agents/.env with the following content:
 # GROQ_API_KEY=your-groq-api-key
 # XAI_API_KEY=your-xai-api-key
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 
 
 class SearchAgent:
@@ -64,27 +64,37 @@ class SearchAgent:
         # os.environ["GROQ_API_KEY"] = "your-groq-api-key"
         # os.environ["XAI_API_KEY"] = "your-xai-api-key"
         if host == "groq":
-            self.model_name="groq/llama3-8b-8192"
+            self.model_name = "groq/llama3-8b-8192"
             api_key = os.getenv("GROQ_API_KEY")
-        elif host =="xai":
-            self.model_name="xai/grok-4-latest"
+            env_name = "GROQ_API_KEY"
+        elif host == "xai":
+            self.model_name = "xai/grok-4.5"
             api_key = os.getenv("XAI_API_KEY")
-        elif host=="cerebras":
-            self.model_name="cerebras/llama-3.3-70b"
+            env_name = "XAI_API_KEY"
+        elif host == "cerebras":
+            self.model_name = "cerebras/llama-3.3-70b"
             api_key = os.getenv("CEREBRAS_API_KEY")
-        elif host=="hf":
+            env_name = "CEREBRAS_API_KEY"
+        elif host == "hf":
             self.model_name = os.getenv("HF_API")
+            env_name = "HF_API"
         else:
             raise AssertionError("Invalid host")
-        self.delay=delay
+        self.delay = delay
 
-        if host=="hf":
-           self.model= InferenceClientModel(self.model_name)
+        if not self.model_name:
+            raise ValueError(
+                f"Missing required API configuration: {env_name}.\n"
+                "Create an Agents/.env file or set the environment variable and restart."
+            )
+
+        if host == "hf":
+            self.model = InferenceClientModel(self.model_name)
         else:
             self.model = LiteLLMModel(
                 self.model_name,
                 temperature=0.2,
-                api_key=api_key
+                api_key=api_key,
             )
 
     def call(self, query, max_results=20):
