@@ -19,3 +19,7 @@ University of Maryland, College Park, Mar 09, 2026 [Slide](https://docs.google.c
 
 ACM VIT, India, Jul 31, 2026
 [Slide](https://docs.google.com/presentation/d/1TRelJHLe_j-qlnj6tOqEujWj8r90wTqVAuYjxpZN3h4/edit?usp=sharing)
+
+
+PSG iTech ACM Student Chapter, India, Sep 12, 2026.
+[Slide](https://docs.google.com/presentation/d/1JKyEiU9pRqx6fSULxRJsjuYgTEyssSIcTTolrQLuEK8/edit?usp=sharing)
